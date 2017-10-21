@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">НАУ \"ХАИ\" 2</string>
+
+    <string name="app_intro_skip">Далее</string>
 </resources>
