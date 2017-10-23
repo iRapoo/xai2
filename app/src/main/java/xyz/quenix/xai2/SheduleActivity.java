@@ -14,6 +14,12 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.github.florent37.awesomebar.ActionItem;
 import com.github.florent37.awesomebar.AwesomeBar;
 
@@ -21,7 +27,9 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -41,12 +49,14 @@ public class SheduleActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
 
     private HorizontalCalendar horizontalCalendar;
-
     private RecyclerView mRecyclerView;
     private TimeLineAdapter mTimeLineAdapter;
     private List<TimeLineModel> mDataList = new ArrayList<>();
     private GradientDrawable.Orientation mOrientation;
     private boolean mWithLinePadding;
+
+    public RequestQueue queue;
+    public StringRequest SheduleRequest;
 
     Context context = this;
 
@@ -57,17 +67,81 @@ public class SheduleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_shedule);
         ButterKnife.bind(this);
 
+        final String now_group = (Storage.emptyData(context, "NOW_GROUP")) ? getResources().getString(R.string.select) : Storage.loadData(context, "NOW_GROUP");
+
+        queue = Volley.newRequestQueue(context);
+
         final Intent SelectIntent = new Intent(SheduleActivity.this, SelectActivity.class);
 
         if(Storage.emptyData(context, "NOW_GROUP")){
+            mDataList.add(new TimeLineModel(getResources().getString(R.string.ER_CONTENT),
+                    getResources().getString(R.string.ER_LABEL), OrderStatus.INACTIVE));
+
             startActivity(SelectIntent);
+        }else{
+
+            final Boolean translate = (Storage.loadData(context,"translate").equals("true")) ? true : false;
+            final String[] tmp_s_shedule = Storage.loadData(context,"S_SHEDULE").split(":,");
+            String S_SHEDULE = "";
+
+            if(isInternet.active(context) && Storage.emptyData(context, now_group)) {
+
+                mDataList.add(new TimeLineModel(getResources().getString(R.string.loading),
+                        getResources().getString(R.string.GET_DATA), OrderStatus.INACTIVE));
+
+                SheduleRequest = new StringRequest(Request.Method.POST, isInternet.API + "schedule",
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Storage.saveData(context, now_group, response);
+
+                                mDataList = new ArrayList<>();
+
+                                initView(now_group);
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        "Ошибка Http запроса...", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        }
+                ) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("group", now_group);
+                        params.put("translate", translate + "");
+
+                        return params;
+                    }
+                };
+
+                queue.add(SheduleRequest);
+
+                for(int i = 0; i < tmp_s_shedule.length; i++){
+                    if(tmp_s_shedule[i].equals(now_group)){
+
+                        S_SHEDULE  = (Storage.emptyData(context, "S_SHEDULE")) ?
+                                ":," + now_group : Storage.loadData(context, "S_SHEDULE") + ":," + now_group;
+
+                        Storage.saveData(context, "S_SHEDULE", S_SHEDULE);
+
+                    }
+                }
+
+                /*Intent SheduleIntent = new Intent(SheduleActivity.this, SheduleActivity.class);
+                SheduleIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(SheduleIntent);*/
+
+            }
         }
 
         /*
          * Awesone bar
          */
-
-        String now_group = (Storage.emptyData(context, "NOW_GROUP")) ? getResources().getString(R.string.select) : Storage.loadData(context, "NOW_GROUP");
 
         bar.addAction(R.drawable.awsb_ic_edit_animated, now_group);
 
@@ -149,22 +223,35 @@ public class SheduleActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setHasFixedSize(true);
 
-        initView();
+        initView(now_group);
+
         /*
          * Timeline view end
          */
 
     }
 
-    private void initView() {
-        setDataListItems();
+    private void initView(String now_group) {
+        setDataListItems(now_group);
         mTimeLineAdapter = new TimeLineAdapter(mDataList);
         mRecyclerView.setAdapter(mTimeLineAdapter);
     }
 
-    private void setDataListItems(){
-        mDataList.add(new TimeLineModel(getResources().getString(R.string.ER_CONTENT),
-                getResources().getString(R.string.ER_LABEL), OrderStatus.INACTIVE));
+    private void setDataListItems(String now_group){
+        if(!Storage.emptyData(context, now_group)) {
+
+            String _data;
+
+            for(int i = 1; i < 5; i++) {
+
+                _data = JSON.getJSON(context, "day0", i + "-0", now_group);
+
+                if(!_data.equals("0"))
+                    mDataList.add(new TimeLineModel(_data.split("//")[0], _data.split("//")[1], OrderStatus.COMPLETED));
+                else
+                    mDataList.add(new TimeLineModel(getResources().getString(R.string.no_less)+"", "", OrderStatus.COMPLETED));
+            }
+        }
     }
 
 }
