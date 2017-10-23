@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#3498db</color>
-    <color name="colorPrimary2">#2ecc71</color>
     <color name="colorPrimaryDark">#2980b9</color>
+
+    <color name="colorPrimary2">#2ecc71</color>
     <color name="colorPrimaryDark2">#27ae60</color>
 
     <color name="colorAccent">#FFFFFF</color>
+
+    <color name="colorClouds">#ecf0f1</color>
+    <color name="colorSilver">#bdc3c7</color>
+    <color name="colorConcrete">#95a5a6</color>
     <color name="colorAsbestos">#7f8c8d</color>
 
 </resources>

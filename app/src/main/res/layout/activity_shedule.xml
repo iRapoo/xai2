@@ -36,7 +36,8 @@
                 android:id="@+id/calendarView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
+                android:background="?colorPrimary"
+                app:selectedDateBackground="@drawable/selector"
                 app:textColorSelected="#FFFF"
                 app:textSizeDayName="14sp"
                 app:textSizeDayNumber="20sp"/>

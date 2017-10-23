@@ -16,8 +16,7 @@
     <string name="ADD_GROUP">Нет твоей группы?</string>
     <string name="Language">Выбрать язык</string>
     <string name="GET_DATA">Получение данных...</string>
-    <string name="SELECT">Группа</string>
-    <string name="SELECT_GROUP">Выбрать группу</string>
+    <string name="select">Выбрать</string>
     <string name="search">Поиск</string>
     <string name="LastSel">Расписание в кеше</string>
     <string name="widgetGroup">Выберите группу из кеша</string>
@@ -66,8 +65,8 @@
     <string name="Update">Получить обновление</string>
     <string name="UpdateText">На сервере есть изменения в расписании вашей группы, рекомендуется обновится.\n\nПроцесс займет не больше секунды. </string>
 
-    <string name="ER_LABEL">Ошибка 404</string>
-    <string name="ER_CONTENT">Не найдено записей. Скорее всего вы указали не правельно номер группы.</string>
+    <string name="ER_LABEL">Ой, ошибка...</string>
+    <string name="ER_CONTENT">Не найдено записей. Скорее всего не загружено расписание.</string>
 
     <string-array name="TYPE_WEEK">
         <item>Числитель</item>

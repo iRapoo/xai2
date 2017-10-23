@@ -39,7 +39,6 @@ public class SelectActivity extends AppCompatActivity {
                 .setTitle("")
                 .setImageArray(mImageArray, mColorArray)
                 .setupWithViewPager(mViewPager);
-
     }
 
     private void initFragments() {

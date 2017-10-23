@@ -1,5 +1,6 @@
 package xyz.quenix.xai2;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import xyz.quenix.xai2.MyLibs.*;
 
@@ -14,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainFragment extends Fragment {
+
+    Context context;
+
     private RecyclerView mRecyclerView;
 
     private List<String> mDatas;
@@ -38,6 +44,7 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
+        context = container.getContext();
 
         String list = (mTitle.equals(getResources().getStringArray(R.array.GetList)[0])) ?
                 Storage.loadData(getContext(), "GROUPS_LIST") : Storage.loadData(getContext(), "TEACH_LIST");

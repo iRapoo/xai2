@@ -1,7 +1,10 @@
 package xyz.quenix.xai2;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,8 +29,8 @@ import butterknife.ButterKnife;
 import devs.mulham.horizontalcalendar.HorizontalCalendar;
 import devs.mulham.horizontalcalendar.HorizontalCalendarListener;
 
-import xyz.quenix.xai2.model.OrderStatus;
-import xyz.quenix.xai2.model.TimeLineModel;
+import xyz.quenix.xai2.MyLibs.*;
+import xyz.quenix.xai2.model.*;
 
 public class SheduleActivity extends AppCompatActivity {
 
@@ -45,22 +48,33 @@ public class SheduleActivity extends AppCompatActivity {
     private GradientDrawable.Orientation mOrientation;
     private boolean mWithLinePadding;
 
+    Context context = this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_shedule);
         ButterKnife.bind(this);
+
+        final Intent SelectIntent = new Intent(SheduleActivity.this, SelectActivity.class);
+
+        if(Storage.emptyData(context, "NOW_GROUP")){
+            startActivity(SelectIntent);
+        }
 
         /*
          * Awesone bar
          */
 
-        bar.addAction(R.drawable.awsb_ic_edit_animated, "110");
+        String now_group = (Storage.emptyData(context, "NOW_GROUP")) ? getResources().getString(R.string.select) : Storage.loadData(context, "NOW_GROUP");
+
+        bar.addAction(R.drawable.awsb_ic_edit_animated, now_group);
 
         bar.setActionItemClickListener(new AwesomeBar.ActionItemClickListener() {
             @Override
             public void onActionItemClicked(int position, ActionItem actionItem) {
-                Toast.makeText(getBaseContext(), actionItem.getText()+" clicked", Toast.LENGTH_LONG).show();
+                startActivity(SelectIntent);
             }
         });
 
@@ -112,7 +126,7 @@ public class SheduleActivity extends AppCompatActivity {
                 .monthFormat("MMM")
                 .showDayName(true)
                 .showMonthName(true)
-                //.defaultSelectedDate(defaultDate.getTime())
+                .selectedDateBackground(ContextCompat.getDrawable(this, R.drawable.selector))
                 .textColor(Color.WHITE, Color.WHITE)
                 .build();
 
@@ -149,10 +163,8 @@ public class SheduleActivity extends AppCompatActivity {
     }
 
     private void setDataListItems(){
-        mDataList.add(new TimeLineModel("Item successfully delivered", "C 08:00 до 11:00", OrderStatus.COMPLETED));
-        mDataList.add(new TimeLineModel("Courier is out to delivery your order", "2017-02-12 08:00", OrderStatus.ACTIVE));
-        mDataList.add(new TimeLineModel("Item has reached courier facility at New Delhi", "2017-02-11 21:00", OrderStatus.COMPLETED));
-        mDataList.add(new TimeLineModel("Item has been given to the courier", "2017-02-11 18:00", OrderStatus.COMPLETED));
+        mDataList.add(new TimeLineModel(getResources().getString(R.string.ER_CONTENT),
+                getResources().getString(R.string.ER_LABEL), OrderStatus.INACTIVE));
     }
 
 }

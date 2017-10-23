@@ -12,19 +12,21 @@
         android:id="@+id/time_marker"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:markerSize="20dp"
+        app:line="@color/colorAsbestos"
+        app:linePadding="5dp"
         app:lineSize="3dp"
-        app:line="@color/colorPrimary"
         app:marker="@drawable/ic_marker"
-        app:linePadding="5dp"/>
+        app:markerSize="20dp" />
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_gravity="center_vertical"
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="10dp"
-        android:layout_gravity="center_vertical"
+        android:layout_marginTop="15dp"
+        android:clickable="true"
+        android:foreground="@drawable/selector"
         app:cardElevation="1dp"
         app:contentPadding="15dp">
 

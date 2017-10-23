@@ -14,9 +14,6 @@ import com.github.vipulasri.timelineview.TimelineView;
 
 import java.util.List;
 
-/**
- * Created by HP-HP on 05-12-2015.
- */
 public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
 
     private List<TimeLineModel> mFeedList;
@@ -51,20 +48,12 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
         if(timeLineModel.getStatus() == OrderStatus.INACTIVE) {
             holder.mTimelineView.setMarker(VectorDrawableUtils.getDrawable(mContext, R.drawable.ic_marker_inactive, android.R.color.darker_gray));
         } else if(timeLineModel.getStatus() == OrderStatus.ACTIVE) {
-            holder.mTimelineView.setMarker(VectorDrawableUtils.getDrawable(mContext, R.drawable.ic_marker_active, R.color.colorPrimary));
+            holder.mTimelineView.setMarker(VectorDrawableUtils.getDrawable(mContext, R.drawable.ic_marker_active, R.color.colorAsbestos));
         } else {
-            holder.mTimelineView.setMarker(ContextCompat.getDrawable(mContext, R.drawable.ic_marker), ContextCompat.getColor(mContext, R.color.colorPrimary));
+            holder.mTimelineView.setMarker(ContextCompat.getDrawable(mContext, R.drawable.ic_marker), ContextCompat.getColor(mContext, R.color.colorAsbestos));
         }
 
         holder.mTeacher.setText(timeLineModel.getTeacher());
-
-        /*if(!timeLineModel.getDate().isEmpty()) {
-            holder.mDate.setVisibility(View.VISIBLE);
-            holder.mDate.setText(DateTimeUtils.parseDateTime(timeLineModel.getDate(), "yyyy-MM-dd HH:mm", "hh:mm a, dd-MMM-yyyy"));
-        }
-        else
-            holder.mDate.setVisibility(View.GONE);*/
-
         holder.mMessage.setText(timeLineModel.getMessage());
     }
 
