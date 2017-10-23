@@ -52,9 +52,9 @@ public class MyIntro extends AppIntro {
 
     @Override
     public void onDonePressed() {
-        //Storage.saveData(context, "firstStart", "Enabled");
+        Storage.saveData(context, "firstStart", "Enabled");
 
-        Intent ControllerIntent = new Intent(MyIntro.this, SelectActivity.class);
+        Intent ControllerIntent = new Intent(MyIntro.this, ControllerActivity.class);
         startActivity(ControllerIntent);
 
         finish();

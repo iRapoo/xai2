@@ -124,7 +124,7 @@ public class ControllerActivity extends Activity {
 
                     isFirstStart = Storage.emptyData(context, "firstStart");
 
-                    if (!Storage.loadData(context, "INFO_VERSION").equals(VERSION) && isInternet.active(context)) {
+                    if (!Storage.loadData(context, "INFO_VERSION").equals(VERSION)) {
                         queue.add(DeviceRequest);
                         queue.add(GroupRequest);
                         queue.add(TeachRequest);
@@ -135,7 +135,8 @@ public class ControllerActivity extends Activity {
                         startActivity(IntroIntent);
                     }else
                     {
-
+                        Intent SheduleIntent = new Intent(ControllerActivity.this, SheduleActivity.class);
+                        startActivity(SheduleIntent);
                     }
                 }
             });
