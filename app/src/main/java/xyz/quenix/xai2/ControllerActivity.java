@@ -16,17 +16,22 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import xyz.quenix.xai2.MyLibs.*;
 
 public class ControllerActivity extends Activity {
 
     public boolean isFirstStart;
+    public StringRequest DeviceRequest;
+    public StringRequest GroupRequest;
+    public StringRequest TeachRequest;
+    public RequestQueue queue;
     public String UID = "";
     public String VERSION = "";
 
     Context context = this;
-
-    public RequestQueue queue = Volley.newRequestQueue(context);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,71 @@ public class ControllerActivity extends Activity {
             e.printStackTrace();
         }
 
+        queue = Volley.newRequestQueue(context);
+
+        DeviceRequest = new StringRequest(Request.Method.POST, isInternet.API + "device",
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("true"))
+                            Storage.saveData(context, "INFO_VERSION", VERSION);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                "Ошибка Http запроса...", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("UID", SERIAL);
+                params.put("BRAND", BRAND);
+                params.put("MANUFACTURER", MANUFACTURER);
+                params.put("PRODUCT", PRODUCT);
+                params.put("VERSION", VERSION);
+
+                return params;
+            }
+        };
+
+        GroupRequest = new StringRequest(Request.Method.GET, isInternet.API + "list_group",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Storage.saveData(context,"GROUPS_LIST",response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Ошибка Http запроса...", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+
+        TeachRequest = new StringRequest(Request.Method.GET, isInternet.API + "list_teach",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Storage.saveData(context,"TEACH_LIST",response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Ошибка Http запроса...", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+
         if(isInternet.active(context))
         {
 
@@ -54,60 +124,29 @@ public class ControllerActivity extends Activity {
 
                     isFirstStart = Storage.emptyData(context, "firstStart");
 
+                    if (!Storage.loadData(context, "INFO_VERSION").equals(VERSION) && isInternet.active(context)) {
+                        queue.add(DeviceRequest);
+                        queue.add(GroupRequest);
+                        queue.add(TeachRequest);
+                    }
+
                     if (isFirstStart) {
                         Intent IntroIntent = new Intent(ControllerActivity.this, MyIntro.class);
                         startActivity(IntroIntent);
                     }else
                     {
 
-                        if (!Storage.loadData(context, "INFO_VERSION").equals(VERSION) && isInternet.active(context)) {
-                            StringRequest GroupRequest = new StringRequest(Request.Method.GET, isInternet.API + "list_group",
-                                    new Response.Listener<String>() {
-                                        @Override
-                                        public void onResponse(String response) {
-                                            Storage.saveData(context,"GROUPS_LIST",response);
-                                        }
-                                    }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Toast toast = Toast.makeText(getApplicationContext(),
-                                            "Ошибка Http запроса...", Toast.LENGTH_SHORT);
-                                    toast.show();
-                                }
-                            });
-                            StringRequest TeachRequest = new StringRequest(Request.Method.GET, isInternet.API + "list_teach",
-                                    new Response.Listener<String>() {
-                                        @Override
-                                        public void onResponse(String response) {
-                                            Storage.saveData(context,"TEACH_LIST",response);
-                                        }
-                                    }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Toast toast = Toast.makeText(getApplicationContext(),
-                                            "Ошибка Http запроса...", Toast.LENGTH_SHORT);
-                                    toast.show();
-                                }
-                            });
-                            queue.add(GroupRequest);
-                            queue.add(TeachRequest);
-                        }
-
                     }
                 }
             });
             t.start();
-
-
-
-
 
         } else {
             Intent NoInternetIntent = new Intent(this, NoInternetActivity.class);
             startActivity(NoInternetIntent);
         }
 
-        //finish();
+        finish();
 
     }
 

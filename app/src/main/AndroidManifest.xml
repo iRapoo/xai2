@@ -26,7 +26,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".NoInternetActivity" />
-        <activity android:name=".MyIntro" android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MyIntro" />
+        <activity android:name=".SelectActivity"
+            android:theme="@style/Theme.Panel"></activity>
     </application>
 
 </manifest>
