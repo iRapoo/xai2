@@ -24,12 +24,15 @@ import com.github.florent37.awesomebar.ActionItem;
 import com.github.florent37.awesomebar.AwesomeBar;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -60,14 +63,22 @@ public class SheduleActivity extends AppCompatActivity {
 
     Context context = this;
 
+    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"), Locale.UK);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.AppTheme);
+
+        final Date date = calendar.getTime();
+        final String now_group = (Storage.emptyData(context, "NOW_GROUP")) ? getResources().getString(R.string.select) : Storage.loadData(context, "NOW_GROUP");
+
+        if(now_group.split(".,").length>1)
+            setTheme(R.style.AppThemeTeach);
+        else
+            setTheme(R.style.AppTheme);
+
         setContentView(R.layout.activity_shedule);
         ButterKnife.bind(this);
-
-        final String now_group = (Storage.emptyData(context, "NOW_GROUP")) ? getResources().getString(R.string.select) : Storage.loadData(context, "NOW_GROUP");
 
         queue = Volley.newRequestQueue(context);
 
@@ -97,7 +108,7 @@ public class SheduleActivity extends AppCompatActivity {
 
                                 mDataList = new ArrayList<>();
 
-                                initView(now_group);
+                                initView(now_group, DATE.getWeek(date), DATE.getWeekType(date));
                             }
                         },
                         new Response.ErrorListener() {
@@ -207,7 +218,12 @@ public class SheduleActivity extends AppCompatActivity {
         horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
             @Override
             public void onDateSelected(Date date, int position) {
-                Toast.makeText(SheduleActivity.this, DateFormat.getDateInstance().format(date) + " is selected!", Toast.LENGTH_SHORT).show();
+
+                mDataList = new ArrayList<>();
+
+                initView(now_group, DATE.getWeek(date), DATE.getWeekType(date));
+
+                //Toast.makeText(SheduleActivity.this, DATE.getWeek(date) + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -223,7 +239,7 @@ public class SheduleActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setHasFixedSize(true);
 
-        initView(now_group);
+        initView(now_group, DATE.getWeek(date), DATE.getWeekType(date));
 
         /*
          * Timeline view end
@@ -231,26 +247,41 @@ public class SheduleActivity extends AppCompatActivity {
 
     }
 
-    private void initView(String now_group) {
-        setDataListItems(now_group);
+    private void initView(String now_group, int day, int type) {
+        setDataListItems(now_group, day, type);
         mTimeLineAdapter = new TimeLineAdapter(mDataList);
         mRecyclerView.setAdapter(mTimeLineAdapter);
     }
 
-    private void setDataListItems(String now_group){
-        if(!Storage.emptyData(context, now_group)) {
+    private void setDataListItems(String now_group, int day, int type){
+        if(!Storage.emptyData(context, now_group) && day < 5) {
 
             String _data;
+            OrderStatus _status;
+            Boolean flag = false;
+            final Date date = calendar.getTime();
 
             for(int i = 1; i < 5; i++) {
 
-                _data = JSON.getJSON(context, "day0", i + "-0", now_group);
+                _data = JSON.getJSON(context, "day" + day, i + "-" + type, now_group);
+                _status = (i==DATE.getNowTime() && day == DATE.getWeek(date)) ? OrderStatus.ACTIVE : OrderStatus.COMPLETED;
 
-                if(!_data.equals("0"))
-                    mDataList.add(new TimeLineModel(_data.split("//")[0], _data.split("//")[1], OrderStatus.COMPLETED));
-                else
-                    mDataList.add(new TimeLineModel(getResources().getString(R.string.no_less)+"", "", OrderStatus.COMPLETED));
+                if(!_data.equals("0")) {
+                    flag = true;
+                    mDataList.add(new TimeLineModel(_data.split("//")[0], _data.split("//")[1], _status));
+                }else {
+                    mDataList.add(new TimeLineModel(getResources().getString(R.string.no_less) + "", "0", _status));
+                }
+
             }
+
+            if(!flag){
+                mDataList = new ArrayList<>();
+                mDataList.add(new TimeLineModel(getResources().getString(R.string.day_of_rest), "0", OrderStatus.INACTIVE));
+            }
+
+        }else{
+            mDataList.add(new TimeLineModel(getResources().getString(R.string.day_of_rest), "0", OrderStatus.INACTIVE));
         }
     }
 

@@ -17,6 +17,7 @@
     <string name="Language">Выбрать язык</string>
     <string name="GET_DATA">Получение данных...</string>
     <string name="select">Выбрать</string>
+    <string name="day_of_rest">Выходной день</string>
     <string name="search">Поиск</string>
     <string name="LastSel">Расписание в кеше</string>
     <string name="widgetGroup">Выберите группу из кеша</string>

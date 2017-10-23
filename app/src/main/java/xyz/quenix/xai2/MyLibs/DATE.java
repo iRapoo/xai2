@@ -11,17 +11,22 @@ import java.util.TimeZone;
 public class DATE {
 
     //Получение номера дня недели
-    public static int getWeek() {
+    public static int getWeek(Date date) {
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"), Locale.UK);
-        //c.set(year, month, day);
+
+        c.setTime(date);
+
         int dow = (c.get(Calendar.DAY_OF_WEEK)-1);
-        dow = (dow == 6 || dow == 0 || (c.get(Calendar.HOUR_OF_DAY) >= 17) && dow == 5) ? 0 : (c.get(Calendar.HOUR_OF_DAY) >= 17) ? dow :(dow-1); //Выходные
+        dow = (dow==0) ? 6 : dow-1;
+        //dow = (dow == 6 || dow == 0 || (c.get(Calendar.HOUR_OF_DAY) >= 17) && dow == 5) ? 0 : (c.get(Calendar.HOUR_OF_DAY) >= 17) ? dow :(dow-1); //Выходные
         return dow;
     }
 
     //Получение типа недели
-    public static int getWeekType() {
+    public static int getWeekType(Date date) {
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"), Locale.UK);
+
+        c.setTime(date);
 
         //////////////  параметры типа недели               //
         int tw = 0; //  0 - по умолчанию                    //
@@ -30,7 +35,8 @@ public class DATE {
 
         int dow = (c.get(Calendar.WEEK_OF_YEAR)%2);
         int tmp = (c.get(Calendar.DAY_OF_WEEK)-1);
-        dow = (tmp == 6 || tmp == 0 || (c.get(Calendar.HOUR_OF_DAY) > 17) && tmp == 5) ? ((dow == sw) ? 1 : 0 ) : ((dow == tw) ? 1 : 0);
+        //dow = (tmp == 6 || tmp == 0 || (c.get(Calendar.HOUR_OF_DAY) > 17) && tmp == 5) ? ((dow == sw) ? 1 : 0 ) : ((dow == tw) ? 1 : 0);
+        dow = (dow == tw) ? 1 : 0;
         return dow;
     }
 
@@ -49,29 +55,29 @@ public class DATE {
             Date date = formatter.parse(hour+":"+minute);
 
             if ( formatter.parse("8:00").before(date) && formatter.parse("9:35").after(date) ) {
-                time = 0; //Пара
+                time = 1; //Пара
             }
-            if ( formatter.parse("9:35").before(date) && formatter.parse("9:50").after(date) ) {
+            /*if ( formatter.parse("9:35").before(date) && formatter.parse("9:50").after(date) ) {
                 time = 1; //Перерыв
-            }
+            }*/
             if ( formatter.parse("9:50").before(date) && formatter.parse("11:25").after(date) ) {
                 time = 2; //Пара
             }
-            if ( formatter.parse("11:25").before(date) && formatter.parse("11:55").after(date) ) {
+            /*if ( formatter.parse("11:25").before(date) && formatter.parse("11:55").after(date) ) {
                 time = 3; //Перерыв
-            }
+            }*/
             if ( formatter.parse("11:55").before(date) && formatter.parse("13:30").after(date) ) {
+                time = 3; //Пара
+            }
+            /*if ( formatter.parse("13:30").before(date) && formatter.parse("13:45").after(date) ) {
+                time = 5; //Перерыв
+            }*/
+            if ( formatter.parse("13:45").before(date) && formatter.parse("15:20").after(date) ) {
                 time = 4; //Пара
             }
-            if ( formatter.parse("13:30").before(date) && formatter.parse("13:45").after(date) ) {
-                time = 5; //Перерыв
-            }
-            if ( formatter.parse("13:45").before(date) && formatter.parse("15:20").after(date) ) {
-                time = 6; //Пара
-            }
-            if ( formatter.parse("15:20").before(date) && formatter.parse("17:00").after(date) ) {
+            /*if ( formatter.parse("15:20").before(date) && formatter.parse("17:00").after(date) ) {
                 time = 7; //Перерыв
-            }
+            }*/
         } catch (ParseException e) {
             e.printStackTrace();
         }

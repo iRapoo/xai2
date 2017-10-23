@@ -53,7 +53,11 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
             holder.mTimelineView.setMarker(ContextCompat.getDrawable(mContext, R.drawable.ic_marker), ContextCompat.getColor(mContext, R.color.colorAsbestos));
         }
 
-        holder.mTeacher.setText(timeLineModel.getTeacher());
+        if(!timeLineModel.getTeacher().equals("0") && !timeLineModel.getTeacher().equals("неизвестно"))
+            holder.mTeacher.setText(timeLineModel.getTeacher());
+        else
+            holder.mTeacher.setVisibility(holder.mTeacher.GONE);
+
         holder.mMessage.setText(timeLineModel.getMessage());
     }
 
