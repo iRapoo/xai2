@@ -4,7 +4,8 @@
     <color name="colorPrimary2">#2ecc71</color>
     <color name="colorPrimaryDark">#2980b9</color>
     <color name="colorPrimaryDark2">#27ae60</color>
-    <color name="colorAccent">#FFFFFF</color>
 
+    <color name="colorAccent">#FFFFFF</color>
+    <color name="colorAsbestos">#7f8c8d</color>
 
 </resources>
