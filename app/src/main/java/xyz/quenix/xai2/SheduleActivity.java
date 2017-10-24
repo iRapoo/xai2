@@ -95,15 +95,17 @@ public class SheduleActivity extends AppCompatActivity {
             final String[] tmp_s_shedule = Storage.loadData(context,"S_SHEDULE").split(":,");
             String S_SHEDULE = "";
 
-            if(!isInternet.active(context)){
+            if(!isInternet.active(context) && Storage.emptyData(context, now_group)){
                 mDataList.add(new TimeLineModel(getResources().getString(R.string.ni_text),
                         getResources().getString(R.string.ER_LABEL), OrderStatus.INACTIVE));
             }
 
             if(isInternet.active(context) && Storage.emptyData(context, now_group)) {
 
+                mDataList = new ArrayList<>();
                 mDataList.add(new TimeLineModel(getResources().getString(R.string.loading),
                         getResources().getString(R.string.GET_DATA), OrderStatus.INACTIVE));
+                //initView(now_group, DATE.getWeek(date), DATE.getWeekType(date));
 
                 SheduleRequest = new StringRequest(Request.Method.POST, isInternet.API + "schedule",
                         new Response.Listener<String>() {
@@ -224,11 +226,11 @@ public class SheduleActivity extends AppCompatActivity {
             @Override
             public void onDateSelected(Date date, int position) {
 
-                if(position>2) {
+                if(!Storage.emptyData(context, now_group)) {
                     mDataList = new ArrayList<>();
-
                     initView(now_group, DATE.getWeek(date), DATE.getWeekType(date));
                 }
+
 
                 //Toast.makeText(SheduleActivity.this, position + " is selected!", Toast.LENGTH_SHORT).show();
             }

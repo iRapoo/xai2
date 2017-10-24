@@ -151,9 +151,15 @@ public class ControllerActivity extends Activity {
             t.start();
 
         } else {
-            Intent NoInternetIntent = new Intent(ControllerActivity.this, NoInternetActivity.class);
-            startActivity(NoInternetIntent);
-            finish();
+            if(Storage.emptyData(context, "NOW_GROUP")) {
+                Intent NoInternetIntent = new Intent(ControllerActivity.this, NoInternetActivity.class);
+                startActivity(NoInternetIntent);
+                finish();
+            }else {
+                Intent SheduleIntent = new Intent(ControllerActivity.this, SheduleActivity.class);
+                startActivity(SheduleIntent);
+                finish();
+            }
         }
 
     }
