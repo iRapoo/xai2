@@ -133,21 +133,28 @@ public class ControllerActivity extends Activity {
                     if (isFirstStart) {
                         Intent IntroIntent = new Intent(ControllerActivity.this, MyIntro.class);
                         startActivity(IntroIntent);
+                        finish();
                     }else
                     {
-                        Intent SheduleIntent = new Intent(ControllerActivity.this, SheduleActivity.class);
-                        startActivity(SheduleIntent);
+                        if(Storage.emptyData(context, "NOW_GROUP") && isInternet.TYPE > 1){
+                            Intent NoInternetIntent = new Intent(ControllerActivity.this, NoInternetActivity.class);
+                            startActivity(NoInternetIntent);
+                            finish();
+                        }else {
+                            Intent SheduleIntent = new Intent(ControllerActivity.this, SheduleActivity.class);
+                            startActivity(SheduleIntent);
+                            finish();
+                        }
                     }
                 }
             });
             t.start();
 
         } else {
-            Intent NoInternetIntent = new Intent(this, NoInternetActivity.class);
+            Intent NoInternetIntent = new Intent(ControllerActivity.this, NoInternetActivity.class);
             startActivity(NoInternetIntent);
+            finish();
         }
-
-        finish();
 
     }
 

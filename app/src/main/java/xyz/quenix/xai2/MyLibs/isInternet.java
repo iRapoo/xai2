@@ -4,6 +4,12 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.UnknownHostException;
+
 public class isInternet {
 
     public static String HOST = "http://rapoo.mysit.ru/";
@@ -33,5 +39,6 @@ public class isInternet {
         }
         return false;
     }
+
 
 }
