@@ -95,6 +95,11 @@ public class SheduleActivity extends AppCompatActivity {
             final String[] tmp_s_shedule = Storage.loadData(context,"S_SHEDULE").split(":,");
             String S_SHEDULE = "";
 
+            if(!isInternet.active(context)){
+                mDataList.add(new TimeLineModel(getResources().getString(R.string.ni_text),
+                        getResources().getString(R.string.ER_LABEL), OrderStatus.INACTIVE));
+            }
+
             if(isInternet.active(context) && Storage.emptyData(context, now_group)) {
 
                 mDataList.add(new TimeLineModel(getResources().getString(R.string.loading),
@@ -219,11 +224,13 @@ public class SheduleActivity extends AppCompatActivity {
             @Override
             public void onDateSelected(Date date, int position) {
 
-                mDataList = new ArrayList<>();
+                if(position>2) {
+                    mDataList = new ArrayList<>();
 
-                initView(now_group, DATE.getWeek(date), DATE.getWeekType(date));
+                    initView(now_group, DATE.getWeek(date), DATE.getWeekType(date));
+                }
 
-                //Toast.makeText(SheduleActivity.this, DATE.getWeek(date) + " is selected!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SheduleActivity.this, position + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -280,7 +287,9 @@ public class SheduleActivity extends AppCompatActivity {
                 mDataList.add(new TimeLineModel(getResources().getString(R.string.day_of_rest), "0", OrderStatus.INACTIVE));
             }
 
-        }else{
+        }
+
+        if(day > 4){
             mDataList.add(new TimeLineModel(getResources().getString(R.string.day_of_rest), "0", OrderStatus.INACTIVE));
         }
     }
